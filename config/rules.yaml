@@ -1,0 +1,91 @@
+rules:
+  required:
+    - id: image-repo-required
+      key: image.repository
+    - id: image-tag-required
+      key: image.tag
+    - id: region-required
+      key: region
+
+  enum:
+    - id: region-enum
+      key: region
+      values: [aps1, use1, euw1]
+    - id: pull-policy-enum
+      key: image.pullPolicy
+      values: [Always, IfNotPresent, Never]
+    - id: service-type-enum
+      key: service.type
+      values: [ClusterIP, NodePort, LoadBalancer]
+
+  regex:
+    - id: image-repo-format
+      key: image.repository
+      pattern: '^registry\.example\.com/[a-zA-Z0-9-]+$'
+      description: "Image repository format: registry.example.com/{service-name}"
+    - id: image-tag-format
+      key: image.tag
+      pattern: '^v[0-9]+\.[0-9]+\.[0-9]+$'
+      description: "Image tag format: vMAJOR.MINOR.PATCH"
+    - id: jdbc-url-format
+      key: spring.datasource.url
+      pattern: '^jdbc:mysql://mysql-[a-z]+-[a-z0-9]+\.example\.com:[0-9]+/[a-zA-Z0-9-]+$'
+      description: "JDBC URL format: jdbc:mysql://mysql-{env}-{region}.example.com:{port}/{db}"
+
+  compare:
+    - id: replica-range
+      key: autoscaling.maxReplicas
+      op: ">"
+      target: autoscaling.minReplicas
+    - id: region-match-label
+      key: region
+      op: "=="
+      target_label: region
+    - id: spring-app-name
+      key: spring.application.name
+      op: "=="
+      target_label: app
+    - id: replica-count-min
+      key: replicaCount
+      op: ">="
+      target_value: 2
+      description: "Replica count must be at least 2"
+
+  derive:
+    - id: gw-port
+      key: istio.gateway.port
+      from: instance.labels.region
+      map:
+        aps1: 11443
+        use1: 12443
+
+whitelist:
+  correctness: []
+  diff:
+    - key: spring.profiles.active
+      mode: allow_diff
+      reason: "Profile differs across environments"
+    - key: spring.datasource.url
+      mode: allow_diff
+      reason: "Database URL differs across environments"
+    - key: spring.datasource.username
+      mode: allow_diff
+      reason: "Database username differs across environments"
+    - key: spring.redis.host
+      mode: allow_diff
+      reason: "Redis host differs across environments"
+    - key: logging.level.root
+      mode: allow_diff
+      reason: "Log level differs across environments"
+    - key: logging.level
+      mode: allow_diff
+      reason: "Log level differs across environments"
+    - key: resources
+      mode: allow_diff
+      reason: "Resource limits differ across environments"
+    - key: istio.gateway.hosts
+      mode: allow_diff
+      reason: "Gateway hosts differ across environments"
+    - key: autoscaling
+      mode: allow_diff
+      reason: "Autoscaling settings may differ across environments"

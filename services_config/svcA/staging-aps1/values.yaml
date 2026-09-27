@@ -1,0 +1,32 @@
+replicaCount: 3
+
+image:
+  repository: registry.example.com/svcA
+  tag: v1.2.3
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: "2"
+    memory: 2Gi
+  requests:
+    cpu: "1"
+    memory: 1Gi
+
+istio:
+  gateway:
+    enabled: true
+    port: 11443
+    hosts:
+      - svcA.staging.example.com
+
+region: aps1
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 8

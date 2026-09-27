@@ -1,0 +1,11 @@
+applications:
+  - svcA
+  - svcB
+
+rule_file: rules.yaml
+
+base_path: /home/zlr/Projects/config-guard/services_config
+
+defaults:
+  mode: correctness
+  output: json

@@ -1,0 +1,32 @@
+replicaCount: 2
+
+image:
+  repository: registry.example.com/svcB
+  tag: v2.0.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 9090
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: 512Mi
+  requests:
+    cpu: "250m"
+    memory: 256Mi
+
+istio:
+  gateway:
+    enabled: true
+    port: 11443
+    hosts:
+      - svcB.uat.example.com
+
+region: aps1
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4

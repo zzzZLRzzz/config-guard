@@ -1,0 +1,38 @@
+replicaCount: 3
+
+image:
+  repository: registry.example.com/svcA
+  tag: v1.2.3
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: "500m"
+    memory: 512Mi
+
+istio:
+  gateway:
+    enabled: true
+    port: 11443
+    hosts:
+      - svcA.uat.example.com
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: uat
+  - name: REGION
+    value: aps1
+
+region: use1
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5

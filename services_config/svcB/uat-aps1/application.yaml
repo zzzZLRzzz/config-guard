@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: svcB
+  profiles:
+    active: uat
+  datasource:
+    url: jdbc:mysql://mysql-uat-aps1.example.com:3306/svcB
+    username: svcB_uat
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  redis:
+    host: redis-uat-aps1.example.com
+    port: 6379
+
+server:
+  port: 9090
+  servlet:
+    context-path: /svcB
+
+logging:
+  level:
+    root: INFO
+    com.example.svcB: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+svcB:
+  region: aps1
+  feature:
+    enable-new-api: true
+    timeout-ms: 2000

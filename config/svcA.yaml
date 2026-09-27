@@ -1,0 +1,19 @@
+rules:
+  enum:
+    - id: service-type-enum
+      key: service.type
+      values: [LoadBalancer]
+  compare:
+    - id: spring-region-match
+      key: svcA.region
+      op: "=="
+      target: region
+
+whitelist:
+  correctness:
+    - rule: spring-region-match
+      reason: "Region match rule not applicable to svcA"
+  diff:
+    - key: region
+      mode: allow_diff
+      reason: "Region may differ across svcA instances"
